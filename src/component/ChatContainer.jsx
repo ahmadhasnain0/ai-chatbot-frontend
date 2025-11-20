@@ -7,7 +7,6 @@ import ChatInput from "./ChatInput";
 import { 
   createConversation,
   sendMessageToConversation,
-  getConversationMessages
 } from "../services/chatService";
 
 export default function ChatContainer() {
@@ -16,16 +15,20 @@ export default function ChatContainer() {
   const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
+  const previousMessagesRef = useRef([]);
 
+  // Scroll only when new message added (NOT when typing input)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > previousMessagesRef.current.length) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+    previousMessagesRef.current = messages;
   }, [messages]);
 
   // =====================================================
-  // HANDLE SENDING MESSAGE (FIXED VERSION)
+  // SEND MESSAGE
   // =====================================================
   const handleSendMessage = async (text) => {
-    // STEP 1: Add user message instantly FIRST
     const userMsg = {
       id: Date.now(),
       role: "user",
@@ -35,20 +38,16 @@ export default function ChatContainer() {
 
     setMessages((prev) => [...prev, userMsg]);
 
-    // STEP 2: Set loading state AFTER user message is rendered
-    setTimeout(() => {
-      setLoading(true);
-    }, 10);
+    setTimeout(() => setLoading(true), 10);
 
-    // STEP 3: If conversation not created → create it now
     let newConversationId = conversationId;
+
     if (!newConversationId) {
       const res = await createConversation();
       newConversationId = res.conversation.id;
       setConversationId(newConversationId);
     }
 
-    // STEP 4: Send message to backend
     try {
       const res = await sendMessageToConversation(newConversationId, text);
 
@@ -61,29 +60,31 @@ export default function ChatContainer() {
 
       setMessages((prev) => [...prev, botMsg]);
     } catch (error) {
-      const errorMsg = {
-        id: Date.now(),
-        role: "assistant",
-        content: "Server error. Please try again.",
-        timestamp: new Date().toLocaleTimeString(),
-      };
-      setMessages((prev) => [...prev, errorMsg]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          role: "assistant",
+          content: "Server error. Please try again.",
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      ]);
     }
 
     setLoading(false);
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen bg-white">
 
-      {/* Header – Full Width */}
-      <div className="primary-bg text-white px-12 py-4 shadow w-full fixed top-0 left-0 z-20 ">
+      {/* Header fixed */}
+      <div className="primary-bg text-white px-12 py-4 shadow w-full fixed top-0 left-0 z-20">
         <h1 className="text-xl font-bold">AI Chatbot</h1>
         <p className="text-blue-100">{loading ? "Typing..." : "Online"}</p>
       </div>
 
-      {/* Chat Body – Centered 50% width on large screens */}
-      <div className="flex flex-col flex-1 w-full lg:w-1/2 mx-auto bg-white py-20">
+      {/* Chat Body – centered */}
+      <div className="flex flex-col flex-1 w-full lg:w-1/2 mx-auto pt-24 pb-28">
 
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-6">
@@ -102,15 +103,15 @@ export default function ChatContainer() {
 
           <div ref={messagesEndRef} />
         </div>
-
-        {/* Input – Bottom */}
-        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 
-                w-full lg:w-1/2 bg-white z-20">
-
-          <ChatInput onSendMessage={handleSendMessage} />
-        </div>
-
       </div>
+
+      {/* Fixed bottom input centered */}
+      <div
+        className="fixed bottom-0 left-1/2 transform -translate-x-1/2 
+                   w-full lg:w-1/2 z-30 px-4">
+        <ChatInput onSendMessage={handleSendMessage} />
+      </div>
+
     </div>
   );
 }
