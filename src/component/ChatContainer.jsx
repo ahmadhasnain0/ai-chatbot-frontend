@@ -25,11 +25,12 @@ export default function ChatContainer() {
   // HANDLE SENDING MESSAGE (FIXED VERSION)
   // =====================================================
   const formatAssistantResponse = (content) => {
-  // Remove source citations like 【66:1†source】
+  // Remove source citations
   let cleanContent = content.replace(/【\d+:\d+†source】/g, '');
-  
+  // Convert “quoted text” to **bold text**
+  cleanContent = cleanContent.replace(/[“”](.*?)[“”]/g, '**$1**'); 
   return cleanContent;
-  };
+};
   const handleSendMessage = async (text) => {
     // STEP 1: Add user message instantly FIRST
     if (loading) return; // Prevent sending if already loading
@@ -104,6 +105,7 @@ export default function ChatContainer() {
               isUser={msg.role === "user"}
               message={msg.content}
               timestamp={msg.timestamp}
+              isFormatted={msg.isFormatted}
             />
           ))}
 
