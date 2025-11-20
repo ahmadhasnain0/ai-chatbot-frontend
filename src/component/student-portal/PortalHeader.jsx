@@ -92,7 +92,7 @@ export default function PortalHeader() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-200 shadow-md">
+        <div className="lg:hidden bg-white border-t border-slate-200 shadow-md  absolute bg-white w-full px-10 left-0">
           <nav className="flex flex-col px-4 py-2 space-y-1">
             {["Dashboard", "Services", "Resources", "Support"].map((item) => (
               <a
