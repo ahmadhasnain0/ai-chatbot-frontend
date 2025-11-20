@@ -62,7 +62,7 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden pb-4 flex flex-col gap-3">
+          <nav className="md:hidden pb-4 flex flex-col gap-3 absolute bg-white w-full px-10 left-0">
             <a href="#" className="primary-text-link py-2">
               Home
             </a>
