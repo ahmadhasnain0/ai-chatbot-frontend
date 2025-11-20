@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-export default function ChatInput({ onSendMessage }) {
+export default function ChatInput({ onSendMessage, disabled, placeholder }) {
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e) => {
@@ -25,7 +25,7 @@ export default function ChatInput({ onSendMessage }) {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type your message..."
+          placeholder={placeholder || "Type your message..."}
           className="
             flex-1 min-w-0
             px-3 py-3
@@ -38,7 +38,7 @@ export default function ChatInput({ onSendMessage }) {
         {/* Send Button */}
         <button
           type="submit"
-          disabled={!message.trim()}
+          disabled={!message.trim() || disabled}
           className="
             px-5 py-3
             primary-color text-white font-medium

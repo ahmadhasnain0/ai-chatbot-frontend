@@ -24,8 +24,16 @@ export default function ChatContainer() {
   // =====================================================
   // HANDLE SENDING MESSAGE (FIXED VERSION)
   // =====================================================
+  const formatAssistantResponse = (content) => {
+  // Remove source citations like 【66:1†source】
+  let cleanContent = content.replace(/【\d+:\d+†source】/g, '');
+  
+  return cleanContent;
+  };
   const handleSendMessage = async (text) => {
     // STEP 1: Add user message instantly FIRST
+    if (loading) return; // Prevent sending if already loading
+    setLoading(true);
     const userMsg = {
       id: Date.now(),
       role: "user",
@@ -36,9 +44,9 @@ export default function ChatContainer() {
     setMessages((prev) => [...prev, userMsg]);
 
     // STEP 2: Set loading state AFTER user message is rendered
-    setTimeout(() => {
-      setLoading(true);
-    }, 10);
+    // setTimeout(() => {
+    //   setLoading(true);
+    // }, 10);
 
     // STEP 3: If conversation not created → create it now
     let newConversationId = conversationId;
@@ -52,11 +60,14 @@ export default function ChatContainer() {
     try {
       const res = await sendMessageToConversation(newConversationId, text);
 
+      const formattedContent = formatAssistantResponse(res.assistantResponse.content);
+
       const botMsg = {
         id: res.assistantResponse.id,
         role: "assistant",
-        content: res.assistantResponse.content,
+        content: formattedContent,
         timestamp: new Date().toLocaleTimeString(),
+        isFormatted: true // Add this flag
       };
 
       setMessages((prev) => [...prev, botMsg]);
@@ -107,7 +118,9 @@ export default function ChatContainer() {
         <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 
                 w-full lg:w-1/2 bg-white z-20">
 
-          <ChatInput onSendMessage={handleSendMessage} />
+          <ChatInput onSendMessage={handleSendMessage}
+      disabled={loading}
+      placeholder={loading ? "AI is responding..." : "Type your message..." } />
         </div>
 
       </div>
