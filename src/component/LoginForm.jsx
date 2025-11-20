@@ -1,18 +1,36 @@
 'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
+import { useFormik } from 'formik';
 import InputField from './InputField';
 import PrimaryButton from './PrimaryButton';
+import { loginUser } from '../services/authService';
+import { useRouter } from 'next/navigation';
+import { loginSchema } from '../validation/index';
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const router = useRouter();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Login submitted:', { email, password });
-    // Add your login logic here
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: ''
+    },
+    validationSchema: loginSchema,
+    onSubmit: async (values, { setSubmitting, setStatus }) => {
+      try {
+        setStatus('');
+        const response = await loginUser(values.email, values.password);
+
+        localStorage.setItem('token', response.token);
+        router.push('/chatbot');
+
+      } catch (err) {
+        setStatus(err.message || "Login failed. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
+    }
+  });
 
   return (
     <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
@@ -21,48 +39,42 @@ export default function LoginForm() {
         <p className="text-gray-600">Sign in to continue to your account</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {formik.status && (
+        <div className="mb-4 p-3 text-sm text-red-600 bg-red-100 rounded">
+          {formik.status}
+        </div>
+      )}
+
+      <form onSubmit={formik.handleSubmit} className="space-y-6">
         <InputField
           type="email"
+          name="email"
           placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
           label="Email Address"
-          required
+          error={formik.touched.email && formik.errors.email}
         />
 
         <InputField
           type="password"
+          name="password"
           placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
           label="Password"
-          required
+          error={formik.touched.password && formik.errors.password}
         />
 
-        <div className="flex items-center justify-between text-sm">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <span className="ml-2 text-gray-600">Remember me</span>
-          </label>
-          <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-            Forgot password?
-          </a>
-        </div>
-
-        <PrimaryButton type="submit" fullWidth>
-          Sign In
+        <PrimaryButton 
+          type="submit" 
+          fullWidth 
+          disabled={formik.isSubmitting}
+        >
+          {formik.isSubmitting ? "Signing In..." : "Sign In"}
         </PrimaryButton>
-
-        <p className="text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-            Sign up
-          </a>
-        </p>
       </form>
     </div>
   );

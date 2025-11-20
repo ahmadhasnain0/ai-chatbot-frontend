@@ -1,73 +1,107 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import ChatMessage from './ChatMessage';
-import ChatInput from './ChatInput';
+import React, { useState, useRef, useEffect } from "react";
+import ChatMessage from "./ChatMessage";
+import ChatInput from "./ChatInput";
+
+import { 
+  createConversation,
+  sendMessageToConversation,
+  getConversationMessages
+} from "../services/chatService";
 
 export default function ChatContainer() {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: 'Hello! How can I help you today?',
-      isUser: false,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
+  const [conversationId, setConversationId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = (text) => {
-    const userMessage = {
-      id: messages.length + 1,
-      text,
-      isUser: true,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  // =====================================================
+  // HANDLE SENDING MESSAGE (FIXED VERSION)
+  // =====================================================
+  const handleSendMessage = async (text) => {
+    // STEP 1: Add user message instantly FIRST
+    const userMsg = {
+      id: Date.now(),
+      role: "user",
+      content: text,
+      timestamp: new Date().toLocaleTimeString(),
     };
 
-    setMessages([...messages, userMessage]);
+    setMessages((prev) => [...prev, userMsg]);
 
-    // Simulate bot response
+    // STEP 2: Set loading state AFTER user message is rendered
     setTimeout(() => {
-      const botMessage = {
-        id: messages.length + 2,
-        text: 'Thanks for your message! This is a demo response.',
-        isUser: false,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      setLoading(true);
+    }, 10);
+
+    // STEP 3: If conversation not created → create it now
+    let newConversationId = conversationId;
+    if (!newConversationId) {
+      const res = await createConversation();
+      newConversationId = res.conversation.id;
+      setConversationId(newConversationId);
+    }
+
+    // STEP 4: Send message to backend
+    try {
+      const res = await sendMessageToConversation(newConversationId, text);
+
+      const botMsg = {
+        id: res.assistantResponse.id,
+        role: "assistant",
+        content: res.assistantResponse.content,
+        timestamp: new Date().toLocaleTimeString(),
       };
-      setMessages((prev) => [...prev, botMessage]);
-    }, 1000);
+
+      setMessages((prev) => [...prev, botMsg]);
+    } catch (error) {
+      const errorMsg = {
+        id: Date.now(),
+        role: "assistant",
+        content: "Server error. Please try again.",
+        timestamp: new Date().toLocaleTimeString(),
+      };
+      setMessages((prev) => [...prev, errorMsg]);
+    }
+
+    setLoading(false);
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-4xl mx-auto bg-white shadow-xl">
+    <div className="flex flex-col h-screen bg-white">
+
       {/* Header */}
-      <div className="bg-blue-600 text-white px-6 py-4 shadow-md">
-        <h1 className="text-xl font-semibold">AI Chatbot</h1>
-        <p className="text-sm text-blue-100">Online</p>
+      <div className="bg-blue-600 text-white px-6 py-4 shadow">
+        <h1 className="text-xl font-bold">AI Chatbot</h1>
+        <p className="text-blue-100">{loading ? "Typing..." : "Online"}</p>
       </div>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 bg-gray-50">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
         {messages.map((msg) => (
           <ChatMessage
             key={msg.id}
-            message={msg.text}
-            isUser={msg.isUser}
+            isUser={msg.role === "user"}
+            message={msg.content}
             timestamp={msg.timestamp}
           />
         ))}
+
+        {/* Loading indicator appears AFTER all messages */}
+        {loading && (
+          <ChatMessage isUser={false} message="Typing..." />
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
+      {/* Input */}
       <ChatInput onSendMessage={handleSendMessage} />
     </div>
   );
