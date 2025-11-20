@@ -6,7 +6,7 @@ export default function ChatMessage({ message, isUser, timestamp }) {
       <div
         className={`max-w-[70%] rounded-2xl px-4 py-3 ${
           isUser
-            ? 'bg-blue-600 text-white rounded-br-sm'
+            ? 'primary-bg text-white rounded-br-sm'
             : 'bg-gray-200 text-gray-900 rounded-bl-sm'
         }`}
       >
