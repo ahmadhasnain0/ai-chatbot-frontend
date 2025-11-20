@@ -4,7 +4,7 @@ import ChatContainer from '@/src/component/ChatContainer';
 export default function ChatbotPage() {
   return (
     <AuthGuard>
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-white">
       <ChatContainer />
     </div>
     </AuthGuard>

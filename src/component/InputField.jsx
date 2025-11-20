@@ -25,7 +25,7 @@ export default function InputField({
         value={value}
         onChange={onChange}
         onBlur={onBlur} // ✅ Add onBlur
-        className={`w-full px-4 py-3 bg-white border-2 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm ${
+        className={`w-full px-4 py-3 bg-white border-2 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00456A] focus:border-[#00456A] transition-all duration-200 shadow-sm ${
           error ? 'border-red-500' : 'border-gray-400'
         }`}
       />

@@ -74,35 +74,43 @@ export default function ChatContainer() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col h-screen">
 
-      {/* Header */}
-      <div className="bg-blue-600 text-white px-6 py-4 shadow">
+      {/* Header – Full Width */}
+      <div className="primary-bg text-white px-12 py-4 shadow w-full fixed top-0 left-0 z-20 ">
         <h1 className="text-xl font-bold">AI Chatbot</h1>
         <p className="text-blue-100">{loading ? "Typing..." : "Online"}</p>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
-        {messages.map((msg) => (
-          <ChatMessage
-            key={msg.id}
-            isUser={msg.role === "user"}
-            message={msg.content}
-            timestamp={msg.timestamp}
-          />
-        ))}
+      {/* Chat Body – Centered 50% width on large screens */}
+      <div className="flex flex-col flex-1 w-full lg:w-1/2 mx-auto bg-white py-20">
 
-        {/* Loading indicator appears AFTER all messages */}
-        {loading && (
-          <ChatMessage isUser={false} message="Typing..." />
-        )}
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-6">
+          {messages.map((msg) => (
+            <ChatMessage
+              key={msg.id}
+              isUser={msg.role === "user"}
+              message={msg.content}
+              timestamp={msg.timestamp}
+            />
+          ))}
 
-        <div ref={messagesEndRef} />
+          {loading && (
+            <ChatMessage isUser={false} message="Typing..." />
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input – Bottom */}
+        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 
+                w-full lg:w-1/2 bg-white z-20">
+
+          <ChatInput onSendMessage={handleSendMessage} />
+        </div>
+
       </div>
-
-      {/* Input */}
-      <ChatInput onSendMessage={handleSendMessage} />
     </div>
   );
 }
