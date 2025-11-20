@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ChatMessage({ message, isUser, timestamp }) {
+export default function ChatMessage({ message, isUser, timestamp, isFormatted = false }) {
   return (
     <div className={`flex  ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       <div
@@ -10,7 +10,17 @@ export default function ChatMessage({ message, isUser, timestamp }) {
             : 'bg-gray-200 text-gray-900 rounded-bl-sm'
         }`}
       >
-        <p className="text-sm leading-relaxed">{message}</p>
+        {isFormatted ? (
+          <div className="text-gray-800 whitespace-pre-wrap">
+            {message.split('\n').map((line, index) => (
+              <p key={index} className="mb-2 last:mb-0">
+                {line}
+              </p>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-800 whitespace-pre-wrap">{message}</p>
+        )}
         {timestamp && (
           <span className={`text-xs mt-1 block ${isUser ? 'text-blue-100' : 'text-gray-500'}`}>
             {timestamp}
