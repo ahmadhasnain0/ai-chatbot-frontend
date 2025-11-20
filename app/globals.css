@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  --primary: #00456A ;
+  --primary-hover: #0077b6;
+  --primary-text: #131313;
 }
 
 @theme inline {
@@ -12,15 +16,41 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ------------------------------------------------------- */
+
+.primary-bg {
+  background: var(--primary) !important;
+}
+.primary-color {
+  background: var(--primary);
+}
+.primary-color:hover {
+  background: var(--primary-hover);
+}
+
+.primary-text-link {
+  color: var(--primary-text) !important;
+}
+
+.primary-text-link:hover {
+  color: var(--primary) !important;
+}
+
+.primary-text {
+  color: var(--primary) !important;
+}
+.view-btn {
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+  color: var(--primary);
+}
+.view-btn:hover {
+  background-color: var(--primary) !important;
+  color: white;
 }
