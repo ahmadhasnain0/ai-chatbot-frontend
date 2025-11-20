@@ -28,7 +28,16 @@ export default function ChatContainer() {
   // =====================================================
   // SEND MESSAGE
   // =====================================================
+  const formatAssistantResponse = (content) => {
+  // Remove source citations like 【66:1†source】
+  let cleanContent = content.replace(/【\d+:\d+†source】/g, '');
+  
+  return cleanContent;
+  };
   const handleSendMessage = async (text) => {
+    // STEP 1: Add user message instantly FIRST
+    if (loading) return; // Prevent sending if already loading
+    setLoading(true);
     const userMsg = {
       id: Date.now(),
       role: "user",
@@ -38,7 +47,10 @@ export default function ChatContainer() {
 
     setMessages((prev) => [...prev, userMsg]);
 
-    setTimeout(() => setLoading(true), 10);
+    // STEP 2: Set loading state AFTER user message is rendered
+    // setTimeout(() => {
+    //   setLoading(true);
+    // }, 10);
 
     let newConversationId = conversationId;
 
@@ -51,11 +63,14 @@ export default function ChatContainer() {
     try {
       const res = await sendMessageToConversation(newConversationId, text);
 
+      const formattedContent = formatAssistantResponse(res.assistantResponse.content);
+
       const botMsg = {
         id: res.assistantResponse.id,
         role: "assistant",
-        content: res.assistantResponse.content,
+        content: formattedContent,
         timestamp: new Date().toLocaleTimeString(),
+        isFormatted: true // Add this flag
       };
 
       setMessages((prev) => [...prev, botMsg]);
