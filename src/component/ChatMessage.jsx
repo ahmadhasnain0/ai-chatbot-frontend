@@ -7,7 +7,7 @@ export default function ChatMessage({ message, isUser, timestamp, isFormatted = 
       <div
         className={`max-w-[70%] rounded-2xl px-4 py-3 ${
           isUser
-            ? 'bg-blue-600 text-white rounded-br-sm'
+            ? 'primary-bg text-white rounded-br-sm'
             : 'bg-gray-200 text-gray-900 rounded-bl-sm'
         }`}
       >
@@ -16,8 +16,11 @@ export default function ChatMessage({ message, isUser, timestamp, isFormatted = 
             <ReactMarkdown>{message}</ReactMarkdown>
           </div>
         ) : (
-          <p className="whitespace-pre-wrap">{message}</p>
-        )}
+<p
+            className={`${isUser ? "text-white" : "text-gray-900"} whitespace-pre-wrap break-words`}
+          >
+            {message}
+          </p>        )}
         {timestamp && (
           <span className={`text-xs mt-1 block ${isUser ? 'text-blue-100' : 'text-gray-500'}`}>
             {timestamp}

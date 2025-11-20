@@ -16,7 +16,7 @@ export default function ChatInput({ onSendMessage, disabled, placeholder }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white pb-4 pt-2"
+      className="bg-white pb-4 pt-2 px-2"
     >
       <div className="flex items-center gap-2 flex-nowrap overflow-hidden">
 
