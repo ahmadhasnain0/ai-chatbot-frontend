@@ -9,25 +9,16 @@ export default function AuthGuard({ children }) {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      router.replace("/");
-      return;
-    }
-
     async function validate() {
       try {
-        await verifyToken(); // backend confirms token
+        await verifyToken();
         setChecking(false);
       } catch (err) {
-        localStorage.removeItem("token");
         router.replace("/");
       }
     }
 
     validate();
-
   }, [router]);
 
   if (checking) {

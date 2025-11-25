@@ -1,10 +1,64 @@
 "use client";
 
+import { useAuth } from "@/src/context/AuthContext";
+import { logoutUser } from "@/src/services/authService";
 import { User, Menu, Bell, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function PortalHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
+  const { user, loading, logout: contextLogout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      const response = await logoutUser();
+      
+      if (response.success) {
+        contextLogout(); // Clear context
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Force logout even if API call fails
+      contextLogout();
+      router.push("/");
+    }
+  };
+
+  // Get user initials for avatar
+  const getInitials = (name) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map(word => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  // Show loading skeleton while fetching user
+  if (loading) {
+    return (
+      <header className="bg-white shadow-md border-b border-slate-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-[#00456A] rounded-lg flex items-center justify-center shadow-md">
+                <span className="text-white font-bold text-lg">MEC</span>
+              </div>
+              <div className="hidden sm:block">
+                <div className="w-32 h-4 bg-slate-200 rounded animate-pulse mb-2"></div>
+                <div className="w-24 h-3 bg-slate-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+            <div className="w-24 h-8 bg-slate-200 rounded animate-pulse"></div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="bg-white shadow-md border-b border-slate-200 sticky top-0 z-50">
@@ -46,33 +100,51 @@ export default function PortalHeader() {
             <div className="relative group">
               <div className="flex items-center space-x-3 pl-4 border-l border-slate-200 cursor-pointer">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-semibold text-slate-900">John Student</p>
-                  <p className="text-xs text-slate-500">ID: 20241234</p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {user?.name || "Guest User"}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {user?.email || "No email"}
+                  </p>
                 </div>
                 <div className="w-9 h-9 bg-[#00456A] rounded-full flex items-center justify-center shadow-md">
-                  <User className="w-5 h-5 text-white" />
+                  <span className="text-white text-sm font-semibold">
+                    {getInitials(user?.name)}
+                  </span>
                 </div>
               </div>
 
               {/* Dropdown Menu */}
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="p-4 border-b border-slate-200">
-                  <p className="text-sm font-semibold text-slate-900">John Student</p>
-                  <p className="text-xs text-slate-500">john@student.edu</p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {user?.name || "Guest User"}
+                  </p>
+                  <p className="text-xs text-slate-500 break-all">
+                    {user?.email || "No email"}
+                  </p>
+                  {user?.role && (
+                    <span className="inline-block mt-2 px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded capitalize">
+                      {user.role}
+                    </span>
+                  )}
                 </div>
-                <a
-                  href="#"
+                
+                 <a href="#"
                   className="block px-4 py-2 text-slate-700 hover:bg-slate-50 text-sm"
                 >
                   Profile Settings
                 </a>
-                <a
-                  href="#"
+                
+                 <a href="#"
                   className="block px-4 py-2 text-slate-700 hover:bg-slate-50 text-sm"
                 >
                   Change Password
                 </a>
-                <button className="w-full text-left px-4 py-2 text-slate-700 hover:bg-slate-50 text-sm border-t border-slate-200 flex items-center space-x-2">
+                <button 
+                  onClick={handleLogout} 
+                  className="w-full text-left px-4 py-2 text-slate-700 hover:bg-slate-50 text-sm border-t border-slate-200 flex items-center space-x-2"
+                >
                   <LogOut className="w-4 h-4" />
                   <span>Sign Out</span>
                 </button>
@@ -92,7 +164,7 @@ export default function PortalHeader() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-200 shadow-md  absolute bg-white w-full px-10 left-0">
+        <div className="lg:hidden bg-white border-t border-slate-200 shadow-md absolute bg-white w-full px-10 left-0">
           <nav className="flex flex-col px-4 py-2 space-y-1">
             {["Dashboard", "Services", "Resources", "Support"].map((item) => (
               <a
