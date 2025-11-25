@@ -13,65 +13,86 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const protectedRoutes = [
-    "/student-portal",
-    "/chatbot",
-  ];
+  const protectedRoutes = ["/student-portal", "/chatbot"];
+  const publicRoutes = ["/"]; // login page
 
   const checkAuth = async () => {
     const token = localStorage.getItem("token");
 
-    // -----------------------------
-    // If no token → redirect to home
-    // -----------------------------
-    if (!token) {
-      setUser(null);
+    // --------------------------
+    // 1️⃣ If on PUBLIC PAGE & token exists → redirect to portal
+    // --------------------------
+    if (publicRoutes.includes(pathname) && token) {
+      setLoading(true);
+      try {
+        const res = await verifyToken();
+        if (res.success) {
+          setUser(res.user);
+          router.replace("/student-portal");
+          return; // stop further execution
+        }
+      } catch (e) {
+        // if token invalid → allow staying on login page
+      }
       setLoading(false);
-      router.push("/");  // ⬅️ redirect immediately
       return;
     }
 
-    try {
-      const res = await verifyToken();
+    // --------------------------
+    // 2️⃣ Protected routes handling
+    // --------------------------
+    if (protectedRoutes.includes(pathname)) {
+      setLoading(true);
 
-      if (res.success) {
-        setUser(res.user);
-      } else {
+      if (!token) {
         setUser(null);
-        router.push("/"); // ⬅️ redirect if token invalid
+        router.replace("/");
+        return;
       }
-    } catch (err) {
-      setUser(null);
-      router.push("/"); // ⬅️ redirect on error
-    } finally {
-      setLoading(false);
+
+      try {
+        const res = await verifyToken();
+
+        if (res.success) {
+          setUser(res.user);
+          setLoading(false);
+        } else {
+          setUser(null);
+          router.replace("/");
+        }
+      } catch {
+        setUser(null);
+        router.replace("/");
+      }
+
+      return;
     }
+
+    // Default for public pages (non-protected)
+    setLoading(false);
   };
 
   useEffect(() => {
-    if (protectedRoutes.includes(pathname)) {
-      setLoading(true);
-      checkAuth();
-    } else {
-      setLoading(false);
-    }
+    checkAuth();
   }, [pathname]);
 
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
-    router.push("/"); // redirect on logout
+    router.replace("/");
   };
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ user, loading, logout, checkAuth }}>
-      {loading ? (
-        <div className="w-full h-screen flex items-center justify-center">
-          <p>Loading...</p>
-        </div>
-      ) : (
-        children
-      )}
+      {children}
     </AuthContext.Provider>
   );
 };

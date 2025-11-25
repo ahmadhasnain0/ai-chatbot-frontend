@@ -54,10 +54,10 @@ export default function LoginForm() {
       }
     };
 
-    useEffect(() => {
-          handleLogout();
+    // useEffect(() => {
+    //       handleLogout();
     
-        }, []);
+    //     }, []);
 
   return (
     <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
