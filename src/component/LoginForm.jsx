@@ -3,14 +3,15 @@ import React from 'react';
 import { useFormik } from 'formik';
 import InputField from './InputField';
 import PrimaryButton from './PrimaryButton';
-import { loginUser } from '../services/authService';
+import { loginUser,logoutUser } from '../services/authService';
 import { useRouter } from 'next/navigation';
 import { loginSchema } from '../validation/index';
 import { useAuth } from '@/src/context/AuthContext';
+import { useEffect } from "react";
 
 export default function LoginForm() {
   const router = useRouter();
-  const { checkAuth } = useAuth(); // ✅ Get checkAuth from context
+  const { checkAuth,  user, loading, logout: contextLogout  } = useAuth(); // ✅ Get checkAuth from context
 
   const formik = useFormik({
     initialValues: {
@@ -36,6 +37,27 @@ export default function LoginForm() {
       }
     }
   });
+
+   const handleLogout = async () => {
+      try {
+        const response = await logoutUser();
+        
+        if (response.success) {
+          contextLogout(); // Clear context
+          router.push("/");
+        }
+      } catch (error) {
+        console.error("Logout error:", error);
+        // Force logout even if API call fails
+        contextLogout();
+        router.push("/");
+      }
+    };
+
+    useEffect(() => {
+          handleLogout();
+    
+        }, []);
 
   return (
     <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
