@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { verifyToken } from "../services/authService";
+import StudentPortalSkeleton from "@/src/component/StudentPortalSkeleton";
+
 
 const AuthContext = createContext();
 
@@ -82,13 +84,9 @@ export const AuthProvider = ({ children }) => {
     router.replace("/");
   };
 
-  if (loading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+if (loading) {
+  return <StudentPortalSkeleton />;
+}
 
   return (
     <AuthContext.Provider value={{ user, loading, logout, checkAuth }}>

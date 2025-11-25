@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
+import { ArrowLeft } from "lucide-react";
+
 
 import { 
   createConversation,
@@ -89,10 +91,23 @@ export default function ChatContainer() {
     <div className="flex flex-col h-screen">
 
       {/* Header – Full Width */}
-      <div className="primary-bg text-white px-12 py-4 shadow w-full fixed top-0 left-0 z-20 ">
+<div className="primary-bg text-white px-12 py-4 shadow w-full fixed top-0 left-0 z-20 flex items-center gap-6">
+      
+      {/* Back Button */}
+      <button
+        onClick={() => window.history.back()}
+        className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center transition hover:bg-gray-200 cursor-pointer"
+      >
+        <ArrowLeft size={20} />
+      </button>
+
+      <div>
         <h1 className="text-xl font-bold">AI Chatbot</h1>
         <p className="text-blue-100">{loading ? "Typing..." : "Online"}</p>
       </div>
+
+    </div>
+
 
       {/* Chat Body – Centered 50% width on large screens */}
       <div className="flex flex-col flex-1 w-full lg:w-1/2 mx-auto bg-white py-20">

@@ -45,7 +45,7 @@ const AIAssistantCard = () => {
 
           {/* Action Button */}
 
-          <Link href="/home" className="w-[200px] flex items-center gap-2 bg-white text-blue-900 font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-slate-100 transition">
+          <Link href="/chatbot" className="w-[200px] flex items-center gap-2 bg-white text-blue-900 font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-slate-100 transition">
             <MessageCircle className="h-5 w-5" />
             Ask AI for Help
           </Link>
