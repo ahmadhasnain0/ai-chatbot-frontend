@@ -2,12 +2,11 @@ import { NextResponse } from "next/server";
 
 export function middleware(req) {
 
-console.error('Middleware triggered');
- const token = req.cookies.get("token")?.value;
-
-  if (!token) {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
+//  const token = localStorage.getItem("token");
+// console.error('Middleware triggered', token);
+//   if (!token) {
+//     return NextResponse.redirect(new URL("/", req.url));
+//   }
 
   return NextResponse.next();
 }
