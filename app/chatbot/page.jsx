@@ -5,7 +5,9 @@ export default function ChatbotPage() {
   return (
     
     <div className="min-h-screen bg-white">
+      <AuthGuard>
       <ChatContainer />
+      </AuthGuard>
     </div>
    
   );

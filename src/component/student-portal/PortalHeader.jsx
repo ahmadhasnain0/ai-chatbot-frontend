@@ -12,7 +12,6 @@ export default function PortalHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const { user, loading, logout: contextLogout } = useAuth();
-  console.log("Authenticated user in PortalHeader:", user);
 
   const handleLogout = async () => {
     try {
