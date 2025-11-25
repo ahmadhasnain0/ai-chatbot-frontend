@@ -5,6 +5,8 @@ import { logoutUser } from "@/src/services/authService";
 import { User, Menu, Bell, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
+
 
 export default function PortalHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,7 +17,7 @@ export default function PortalHeader() {
   const handleLogout = async () => {
     try {
       const response = await logoutUser();
-      
+
       if (response.success) {
         contextLogout(); // Clear context
         router.push("/");
@@ -66,23 +68,30 @@ export default function PortalHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Left: Logo and Title */}
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-[#00456A] rounded-lg flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-lg">MEC</span>
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="text-lg font-bold text-slate-900">Student Portal</h1>
-              <p className="text-xs text-slate-500">Academic & IT Services</p>
-            </div>
-          </div>
+          <Link href="/home" >
 
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 primary-color  rounded-lg flex items-center justify-center">
+                <span className="text-white text-2xl">AH</span>
+              </div>
+              <div className="hidden sm:block">
+                <div className="flex flex-col ">
+                  <span className="primary-text tracking-tight">
+                    Atlas Heights University
+                  </span>
+                  <span className="text-sm text-gray-600">Excellence in Education</span>
+                </div>
+              </div>
+
+            </div>
+          </Link>
           {/* Center: Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-2">
             {["Dashboard", "Services", "Resources", "Support"].map((item) => (
               <a
                 key={item}
                 href="#"
-                className="text-slate-700 hover:text-blue-600 px-3 py-2 rounded-lg font-medium transition-colors hover:bg-slate-50"
+                className="primary-text-link  px-3 py-2 rounded-lg font-medium transition-colors hover:bg-slate-50"
               >
                 {item}
               </a>
@@ -116,7 +125,7 @@ export default function PortalHeader() {
               </div>
 
               {/* Dropdown Menu */}
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
                 <div className="p-4 border-b border-slate-200">
                   <p className="text-sm font-semibold text-slate-900">
                     {user?.name || "Guest User"}
@@ -130,25 +139,26 @@ export default function PortalHeader() {
                     </span>
                   )}
                 </div>
-                
-                 <a href="#"
+
+                <a href="#"
                   className="block px-4 py-2 text-slate-700 hover:bg-slate-50 text-sm"
                 >
                   Profile Settings
                 </a>
-                
-                 <a href="#"
+
+                <a href="#"
                   className="block px-4 py-2 text-slate-700 hover:bg-slate-50 text-sm"
                 >
                   Change Password
                 </a>
-                <button 
-                  onClick={handleLogout} 
-                  className="w-full text-left px-4 py-2 text-slate-700 hover:bg-slate-50 text-sm border-t border-slate-200 flex items-center space-x-2"
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-slate-700 hover:bg-slate-50 text-sm border-t border-slate-200 flex items-center space-x-2 cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Sign Out</span>
                 </button>
+
               </div>
             </div>
 
@@ -171,7 +181,7 @@ export default function PortalHeader() {
               <a
                 key={item}
                 href="#"
-                className="text-slate-700 hover:text-blue-600 px-3 py-2 rounded-lg font-medium transition-colors hover:bg-slate-50"
+                className="primary-text-link  px-3 py-2 rounded-lg font-medium transition-colors hover:bg-slate-50"
               >
                 {item}
               </a>
