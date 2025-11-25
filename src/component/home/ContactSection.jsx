@@ -81,7 +81,7 @@ export function ContactSection() {
             ></textarea>
             <button
               type="submit"
-              className="px-8 py-3 primary-color rounded-lg hover:bg-gray-100 transition-colors"
+              className="px-8 py-3 bg-[#001A29] text-white rounded-lg transition-colors cursor-pointer"
             >
               Send Message
             </button>
