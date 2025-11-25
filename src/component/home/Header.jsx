@@ -58,7 +58,7 @@ export function Header() {
             </Link>
             <button
               onClick={handleStudentPortalClick}
-              className="px-4 py-2 primary-color text-white rounded-lg text-center"
+              className="px-4 py-2 primary-color text-white rounded-lg text-center cursor-pointer"
             >
               Student Portal
             </button>
@@ -95,7 +95,7 @@ export function Header() {
             </Link>
             <button
               onClick={handleStudentPortalClick}
-              className="px-4 py-2 primary-color text-white rounded-lg transition-colors text-center"
+              className="px-4 py-2 primary-color text-white rounded-lg transition-colors text-center cursor-pointer"
             >
               Student Portal
             </button>
