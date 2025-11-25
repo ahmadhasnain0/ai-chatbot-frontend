@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { usePathname } from "next/navigation";
 import { verifyToken } from "../services/authService";
 
@@ -12,17 +11,23 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  axios.defaults.withCredentials = true;
-
   const protectedRoutes = [
     "/student-portal",
     "/chatbot",
   ];
 
+  // Check authentication by calling verifyToken
   const checkAuth = async () => {
-    try {
-      const res = await verifyToken();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
 
+    try {
+      const res = await verifyToken(); // token sent automatically in header
+      console.log("verifyToken response:", res);
       if (res.success) {
         setUser(res.user);
       } else {
@@ -44,7 +49,10 @@ export const AuthProvider = ({ children }) => {
     }
   }, [pathname]);
 
-  const logout = () => setUser(null);
+  const logout = () => {
+    localStorage.removeItem("token"); // clear token
+    setUser(null);
+  };
 
   return (
     <AuthContext.Provider value={{ user, loading, logout, checkAuth }}>
