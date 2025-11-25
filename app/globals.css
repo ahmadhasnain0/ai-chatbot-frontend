@@ -29,6 +29,7 @@ body {
 }
 .primary-color {
   background: var(--primary);
+  cursor: pointer;
 }
 .primary-color:hover {
   background: var(--primary-hover);

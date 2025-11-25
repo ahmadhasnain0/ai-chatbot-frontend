@@ -77,7 +77,7 @@ export function AnnouncementsSection() {
         <div className="md:hidden text-center mt-8">
           <a
             href="#"
-            className="inline-block px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-colors"
+            className="inline-block px-6 py-3 border-2 border-white text-white rounded-lg hover:bg-white hover:text-black transition-colors"
           >
             View All Announcements
           </a>

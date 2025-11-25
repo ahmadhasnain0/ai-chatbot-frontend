@@ -3,6 +3,7 @@ import React from 'react';
 import { useFormik } from 'formik';
 import InputField from './InputField';
 import PrimaryButton from './PrimaryButton';
+import {Header} from './home/Header';
 import { loginUser,logoutUser } from '../services/authService';
 import { useRouter } from 'next/navigation';
 import { loginSchema } from '../validation/index';
@@ -60,6 +61,8 @@ export default function LoginForm() {
     //     }, []);
 
   return (
+    <>
+      
     <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
@@ -104,5 +107,7 @@ export default function LoginForm() {
         </PrimaryButton>
       </form>
     </div>
+    </>
+
   );
 }

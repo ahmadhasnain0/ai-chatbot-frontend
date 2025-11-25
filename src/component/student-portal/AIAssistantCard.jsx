@@ -1,4 +1,6 @@
 import { Bot, Sparkles, MessageCircle } from "lucide-react";
+import Link from "next/link"; 
+
 
 const AIAssistantCard = () => {
   const popularQuestions = ["Wi-Fi Setup", "Email Access", "Printing Issues", "Password Reset"];
@@ -42,10 +44,11 @@ const AIAssistantCard = () => {
           </p>
 
           {/* Action Button */}
-          <button className="flex items-center gap-2 bg-white text-blue-900 font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-slate-100 transition">
+
+          <Link href="/home" className="w-[200px] flex items-center gap-2 bg-white text-blue-900 font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-slate-100 transition">
             <MessageCircle className="h-5 w-5" />
             Ask AI for Help
-          </button>
+          </Link>
 
           {/* Popular Questions */}
           <div className="mt-6 pt-6 border-t border-white/30">
