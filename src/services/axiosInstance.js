@@ -33,7 +33,13 @@ API.interceptors.request.use(
 API.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // Pass error back to caller
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      // Redirect to login page safely without using useRouter
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
+    }
     return Promise.reject(error?.response || error);
   }
 );

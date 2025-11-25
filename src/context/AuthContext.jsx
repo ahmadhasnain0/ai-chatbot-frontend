@@ -1,13 +1,15 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { verifyToken } from "../services/authService";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const pathname = usePathname();
+  const router = useRouter();
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -16,47 +18,60 @@ export const AuthProvider = ({ children }) => {
     "/chatbot",
   ];
 
-  // Check authentication by calling verifyToken
   const checkAuth = async () => {
     const token = localStorage.getItem("token");
+
+    // -----------------------------
+    // If no token → redirect to home
+    // -----------------------------
     if (!token) {
       setUser(null);
       setLoading(false);
+      router.push("/");  // ⬅️ redirect immediately
       return;
     }
 
     try {
-      const res = await verifyToken(); // token sent automatically in header
-      console.log("verifyToken response:", res);
+      const res = await verifyToken();
+
       if (res.success) {
         setUser(res.user);
       } else {
         setUser(null);
+        router.push("/"); // ⬅️ redirect if token invalid
       }
     } catch (err) {
       setUser(null);
+      router.push("/"); // ⬅️ redirect on error
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Only verify if route requires authentication
     if (protectedRoutes.includes(pathname)) {
+      setLoading(true);
       checkAuth();
     } else {
-      setLoading(false); // Avoid loading spinner on public pages
+      setLoading(false);
     }
   }, [pathname]);
 
   const logout = () => {
-    localStorage.removeItem("token"); // clear token
+    localStorage.removeItem("token");
     setUser(null);
+    router.push("/"); // redirect on logout
   };
 
   return (
     <AuthContext.Provider value={{ user, loading, logout, checkAuth }}>
-      {children}
+      {loading ? (
+        <div className="w-full h-screen flex items-center justify-center">
+          <p>Loading...</p>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };
