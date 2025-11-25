@@ -44,12 +44,14 @@ export default function LoginForm() {
         
         if (response.success) {
           contextLogout(); // Clear context
+          localStorage.removeItem("token");
           router.push("/");
         }
       } catch (error) {
         console.error("Logout error:", error);
         // Force logout even if API call fails
         contextLogout();
+        localStorage.removeItem("token");
         router.push("/");
       }
     };

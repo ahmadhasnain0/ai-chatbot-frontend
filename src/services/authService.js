@@ -14,6 +14,5 @@ export const verifyToken = () => {
 
 
 export const logoutUser = async () => {
-  localStorage.removeItem("token"); // clear token from localStorage
   return API.post("/auth/logout");
 };
