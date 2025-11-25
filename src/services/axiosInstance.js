@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
+  withCredentials: true, // ★ Send cookies with every request
   headers: {
     "Content-Type": "application/json",
   },
@@ -10,13 +11,6 @@ const API = axios.create({
 // Request Interceptor
 API.interceptors.request.use(
   (config) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-
     // Allow FormData without Content-Type
     if (config.data instanceof FormData) {
       delete config.headers["Content-Type"];
@@ -33,19 +27,10 @@ API.interceptors.request.use(
 API.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    const status = error?.response?.status;
-
-    // Auto logout on 401
-    if (status === 401) {
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("token");
-        window.location.href = "/";
-      }
-    }
-
-    // Throw normalized error object
-    throw error?.response?.data || { message: "Server error" };
+    // Hand the error back to the caller (AuthContext decides what to do)
+    return Promise.reject(error?.response || error);
   }
 );
+
 
 export default API;

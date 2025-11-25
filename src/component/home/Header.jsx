@@ -2,10 +2,26 @@
 
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link"; // <-- Import Link from Next.js
+import { verifyToken } from "@/src/services/authService";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+const handleStudentPortalClick = async () => {
+  try {
+    const isValid = await verifyToken();
+    if (isValid?.success) {
+      router.push("/student-portal");
+      return;
+    }
+    router.push("/");
+  } catch (err) {
+    router.push("/");
+  }
+};
+
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -38,12 +54,12 @@ export function Header() {
             <a href="#contactus" className="primary-text-link">
               Contact
             </a>
-            <Link
-              href="/student-portal"
-              className="px-4 py-2 primary-color text-white rounded-lg  transition-colors"
+            <button
+              onClick={handleStudentPortalClick}
+              className="px-4 py-2 primary-color text-white rounded-lg text-center"
             >
               Student Portal
-            </Link>
+            </button>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -75,12 +91,12 @@ export function Header() {
             <a href="#contactus" className="primary-text-link py-2">
               Contact
             </a>
-            <Link
-              href="/student-portal"
-              className="px-4 py-2 primary-color text-white rounded-lg  transition-colors text-center"
+            <button
+              onClick={handleStudentPortalClick}
+              className="px-4 py-2 primary-color text-white rounded-lg transition-colors text-center"
             >
               Student Portal
-            </Link>
+            </button>
           </nav>
         )}
       </div>

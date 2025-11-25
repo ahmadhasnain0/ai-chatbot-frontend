@@ -5,6 +5,13 @@ export const loginUser = async (email, password) => {
 };
 
 
-export const verifyToken = async () => {
-  return API.get("/auth/verify");
+export const verifyToken = () => {
+  return API.get("auth/verify", {
+    withCredentials: true,
+  });
 };
+
+
+export const logoutUser = async () => {
+  return API.post("/auth/logout");
+}

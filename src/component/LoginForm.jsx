@@ -6,9 +6,11 @@ import PrimaryButton from './PrimaryButton';
 import { loginUser } from '../services/authService';
 import { useRouter } from 'next/navigation';
 import { loginSchema } from '../validation/index';
+import { useAuth } from '@/src/context/AuthContext';
 
 export default function LoginForm() {
   const router = useRouter();
+  const { checkAuth } = useAuth(); // ✅ Get checkAuth from context
 
   const formik = useFormik({
     initialValues: {
@@ -21,8 +23,11 @@ export default function LoginForm() {
         setStatus('');
         const response = await loginUser(values.email, values.password);
 
-        localStorage.setItem('token', response.token);
-        router.push('/chatbot');
+        if (response.success) {
+          // ✅ Refresh user context after successful login
+          await checkAuth();
+          router.push('/student-portal');
+        }
 
       } catch (err) {
         setStatus(err.message || "Login failed. Please try again.");
