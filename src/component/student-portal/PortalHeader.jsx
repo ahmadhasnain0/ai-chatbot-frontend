@@ -19,8 +19,8 @@ export default function PortalHeader() {
       const response = await logoutUser();
 
       if (response.success) {
-        contextLogout(); // Clear context
         router.push("/");
+        contextLogout(); // Clear context
       }
     } catch (error) {
       console.error("Logout error:", error);
