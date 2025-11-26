@@ -12,7 +12,7 @@ import { useEffect } from "react";
 
 export default function LoginForm() {
   const router = useRouter();
-  const { checkAuth,  user, loading, logout: contextLogout  } = useAuth(); // ✅ Get checkAuth from context
+  const { setUser,  user, loading, logout: contextLogout  } = useAuth(); // ✅ Get checkAuth from context
 
   const formik = useFormik({
     initialValues: {
@@ -27,7 +27,8 @@ export default function LoginForm() {
 
         if (response.success) {
           // ✅ Refresh user context after successful login
-          await checkAuth();
+          localStorage.setItem("token", response.token);
+          setUser(response.user);
           router.push('/student-portal');
         }
 
