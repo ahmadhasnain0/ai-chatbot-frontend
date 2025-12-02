@@ -29,6 +29,16 @@ export default function ChatContainer() {
   const formatAssistantResponse = (content) => {
   // Remove source citations
   let cleanContent = content.replace(/【\d+:\d+†source】/g, '');
+
+  // Replace whole word "mec" ONLY (not inside other words)
+  cleanContent = cleanContent.replace(/\bmec\b/gi, (match) => {
+    // Case-sensitive replacements:
+    if (match === "mec") return "ahu";
+    if (match === "MEC") return "AHU";
+    if (match === "Mec") return "Ahu";
+    if (match === "mEc") return "aHu";
+    if (match === "meC") return "ahU";
+  });
   // Convert “quoted text” to **bold text**
   cleanContent = cleanContent.replace(/[“”](.*?)[“”]/g, '**$1**'); 
   return cleanContent;
