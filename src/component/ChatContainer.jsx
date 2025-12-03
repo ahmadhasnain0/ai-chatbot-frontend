@@ -40,6 +40,9 @@ export default function ChatContainer() {
     if (match === "meC") return "ahU";
   });
   // Convert “quoted text” to **bold text**
+  cleanContent = cleanContent.replace(/\bMiddle East College\b/g, 'Atlas Highest University');
+  cleanContent = cleanContent.replace(/\bmiddle east college\b/g, 'atlas highest university');
+  cleanContent = cleanContent.replace(/\bMIDDLE EAST COLLEGE\b/g, 'ATLAS HIGHEST UNIVERSITY');
   cleanContent = cleanContent.replace(/[“”](.*?)[“”]/g, '**$1**'); 
   return cleanContent;
 };
