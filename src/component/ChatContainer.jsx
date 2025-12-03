@@ -29,17 +29,64 @@ export default function ChatContainer() {
   const formatAssistantResponse = (content) => {
   // Remove source citations
   let cleanContent = content.replace(/【\d+:\d+†source】/g, '');
+// Normalize unicode versions of m/e/c
+cleanContent = cleanContent
+  // full-width lowercase
+  .replace(/ｍ/g, "m")
+  .replace(/ｅ/g, "e")
+  .replace(/ｃ/g, "c") // full-width c
+
+  // full-width uppercase
+  .replace(/Ｍ/g, "M")
+  .replace(/Ｅ/g, "E")
+  .replace(/Ｃ/g, "C")
+
+  // Cyrillic small
+  .replace(/с/g, "c") // Cyrillic c (small)
+
+  // Cyrillic capital
+  .replace(/Е/g, "E") // Cyrillic E (capital)
+  .replace(/С/g, "C"); // Cyrillic C (capital)
 
   // Replace whole word "mec" ONLY (not inside other words)
-  cleanContent = cleanContent.replace(/\bmec\b/gi, (match) => {
-    // Case-sensitive replacements:
-    if (match === "mec") return "ahu";
-    if (match === "MEC") return "AHU";
-    if (match === "Mec") return "Ahu";
-    if (match === "mEc") return "aHu";
-    if (match === "meC") return "ahU";
-  });
+  cleanContent = cleanContent.replace(/(?<![A-Za-z0-9])mec(?![A-Za-z0-9])/gi, (match) => {
+  const map = {
+    "mec": "ahu",
+    "MEC": "AHU",
+    "Mec": "Ahu",
+    "mEc": "aHu",
+    "meC": "ahU",
+    "MeC": "AhU",
+    "mEC": "aHU"
+  };
+  return map[match] || match;
+});
+// Normalize unicode variants for Middle East College
+cleanContent = cleanContent
+  // FULL-WIDTH → normal
+  .replace(/[Ｍｍ]/g, m => (m === "Ｍ" ? "M" : "m"))
+  .replace(/[Ｉｉ]/g, i => (i === "Ｉ" ? "I" : "i"))
+  .replace(/[Ｄｄ]/g, d => (d === "Ｄ" ? "D" : "d"))
+  .replace(/[Ｌｌ]/g, l => (l === "Ｌ" ? "L" : "l"))
+  .replace(/[Ｅｅ]/g, e => (e === "Ｅ" ? "E" : "e"))
+  .replace(/[Ａａ]/g, a => (a === "Ａ" ? "A" : "a"))
+  .replace(/[Ｓｓ]/g, s => (s === "Ｓ" ? "S" : "s"))
+  .replace(/[Ｔｔ]/g, t => (t === "Ｔ" ? "T" : "t"))
+  .replace(/[Ｃｃ]/g, c => (c === "Ｃ" ? "C" : "c"))
+  .replace(/[Ｏｏ]/g, o => (o === "Ｏ" ? "O" : "o"))
+  .replace(/[Ｇｇ]/g, g => (g === "Ｇ" ? "G" : "g"))
+
+  // Cyrillic to normal
+  .replace(/[С]/g, "C")
+  .replace(/[с]/g, "c")
+  .replace(/[Е]/g, "E")
+  .replace(/[е]/g, "e")
+  .replace(/[О]/g, "O")
+  .replace(/[о]/g, "o");
   // Convert “quoted text” to **bold text**
+  cleanContent = cleanContent.replace(/\bMiddle East College\b/g, 'Atlas Highest University');
+  cleanContent = cleanContent.replace(/\bmiddle east college\b/g, 'atlas highest university');
+  cleanContent = cleanContent.replace(/\bMIDDLE EAST COLLEGE\b/g, 'ATLAS HIGHEST UNIVERSITY');
   cleanContent = cleanContent.replace(/[“”](.*?)[“”]/g, '**$1**'); 
   return cleanContent;
 };
