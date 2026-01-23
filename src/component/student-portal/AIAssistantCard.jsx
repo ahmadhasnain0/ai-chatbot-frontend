@@ -1,16 +1,26 @@
+"use client";
+import { useAuth } from "@/src/context/AuthContext";
 import { Bot, Sparkles, MessageCircle } from "lucide-react";
 import Link from "next/link"; 
 
 
 const AIAssistantCard = () => {
+  const { user, loading } = useAuth();
+
   const popularQuestions = ["Wi-Fi Setup", "Email Access", "Printing Issues", "Password Reset"];
 
+  const handleButtonClick = () => {
+    if (user) {
+      router.push("/chatbot");
+    } else {
+      router.push("/"); // login page
+    }
+  };
+
   return (
-      <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
       <div className="text-start pb-6">
-        <h1 className="text-3xl font-bold text-gray-900 ">
-          Welcome to IT Services
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 ">Welcome to IT Services</h1>
         <p className="mt-2 text-gray-600 ">
           Access all your IT services and get instant help with our AI assistant
         </p>
